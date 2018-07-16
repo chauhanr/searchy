@@ -1,0 +1,143 @@
+openapi: 3.0.0
+servers:
+- url: /api
+info:
+  title: Books API
+  version: '1.0'
+  description: '; API responsible for adding, reading and updating books to the service.'
+paths:
+  /books:
+    get:
+      description: |
+        Get a list of all the books
+      responses:
+        '200':
+          description: |
+            Request successful search and return of lists books.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response'
+  /books/{id}:
+    get:
+      description: get a particuar book based on id
+      responses:
+        '200':
+          description: |
+            request was successfully completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/document'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: id path.
+    post:
+      description: |
+        get a particular book with id
+      responses:
+        '200':
+          description: |
+            Request was successfully completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payload'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/document'
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: id path.
+    put:
+      description: |
+        Update the data for book id 'id' with payload sent in request
+      responses:
+        '200':
+          description: |
+            Request was sucessfully completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payload'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/document'
+
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: id path.
+
+    delete:
+      description: |
+        Get a particular book with id
+      responses:
+        '200':
+          description: |
+            request was successfully completed.
+      parameters:
+      - in: query
+        name: id
+        schema:
+          type: integer
+        description: id of the book to get.
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: id path.
+
+components:
+  schemas:
+    response:
+      type: array
+      items:
+        $ref: '#/components/schemas/document'
+    document:
+      type: object
+      required:
+      - title
+      - link
+      properties:
+        id:
+          type: integer
+          description: book id
+        title:
+          type: string
+          description: title of the book
+        link:
+          type: string
+          description: link to the book
+    payload:
+      type: object
+      required:
+      - title
+      - link
+      properties:
+        title:
+          type: string
+          description: title of the book
+        link:
+          type: string
+          description: link to the book.
