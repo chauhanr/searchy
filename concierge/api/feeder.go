@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 	"io/ioutil"
+	"encoding/json"
 )
 
 var done chan bool
@@ -205,7 +206,35 @@ func lineStore(ch chan lMeta, callBackChannel chan lMsg, done chan bool){
 	}
 }
 
-
+/**
+	This is the front end api that is exposed and intercepts all calls to the /api/feeder urls.
+*/
 func FeedHandler(w http.ResponseWriter, r *http.Request){
+	if r.Method == http.MethodGet {
+		ch := make(chan []document)
+		dGetAllCh <- dAllMsg{ch}
+		docs := <-ch
+		close(ch)
+		if serializedPayload, err := json.Marshal(docs); err == nil {
+			w.Write(serializedPayload)
+		}else{
+			common.Warn("Unable to serialize the documents searched.")
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(`{"code": 500, "msg": "Error occurred while trying to retrieve documents.}`))
+		}
+		return
+	}else if r.Method != http.MethodPost{
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			w.Write([]byte(`{"code": 405, "msg": "Method not allowed.}`))
+			return
+	}
 
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+
+	var newDoc payload
+	decoder.Decode(&newDoc)
+	pProcessCh <- newDoc
+
+	w.Write([]byte(`{"code": 200, "msg": "Request is being processed."}`))
 }
