@@ -9,6 +9,8 @@ import (
 func main(){
 	common.Log("Adding API handlers")
 	http.HandleFunc("/api/feeder", api.FeedHandler)
+	http.HandleFunc("/api/query", api.QueryHandler)
+
 	common.Log("Starting Feeder")
 	api.StartFeederSystem()
 
