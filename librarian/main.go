@@ -9,6 +9,8 @@ import (
 func main(){
 	common.Log("Adding api handlers.. ")
 	http.HandleFunc("/api/index", api.IndexHandler)
+	http.HandleFunc("/api/query", api.QueryHandler)
+
 
 	common.Log("Starting indexer")
 	api.StartIndexSystem()
